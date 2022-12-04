@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "I4tx7v21pcPr8lPOmHS36ZAmh0DqS1QFEI6FeQRSsQIp1DZB8GJBwm2kBtNRJVc8y7ScSaHInXv3SNUktQRW+g==",
+  "dgSpecHash": "nzowWCYvbAhwtlk+KbDLsBc2+V87n/MY8Z0792tEZP5kcW5SBtTY7ppJchjmzyGVKBmjQSEbmCDCTyfXekFxiw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Camer\\source\\repos\\square-x-square\\square-x-square.csproj",
   "expectedPackageFiles": [
@@ -28,6 +28,7 @@
     "C:\\Users\\Camer\\.nuget\\packages\\microsoft.extensions.primitives\\6.0.0\\microsoft.extensions.primitives.6.0.0.nupkg.sha512",
     "C:\\Users\\Camer\\.nuget\\packages\\microsoft.jsinterop\\6.0.10\\microsoft.jsinterop.6.0.10.nupkg.sha512",
     "C:\\Users\\Camer\\.nuget\\packages\\microsoft.jsinterop.webassembly\\6.0.10\\microsoft.jsinterop.webassembly.6.0.10.nupkg.sha512",
+    "C:\\Users\\Camer\\.nuget\\packages\\mudblazor\\6.1.2\\mudblazor.6.1.2.nupkg.sha512",
     "C:\\Users\\Camer\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.0\\system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",
     "C:\\Users\\Camer\\.nuget\\packages\\system.io.pipelines\\6.0.3\\system.io.pipelines.6.0.3.nupkg.sha512",
     "C:\\Users\\Camer\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",

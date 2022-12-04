@@ -7,3 +7,29 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<MudButton OnClick="@RunGame" Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
+
+@code {
+    @using Classes;
+
+    private GameState gs;
+
+    protected override void OnInitialized()
+    {
+        gs = new GameState();
+    }
+
+    public void RunGame()
+    {
+        Console.WriteLine(gs);
+        Classes.Block i = new IBlock(3);
+        i.Flip();
+        i.RotateCW();
+        i.RotateCW();
+        gs.CheckLocationAndAddBlock(i);
+        Console.WriteLine(gs);
+        gs.RemoveBlockAtPosition(new Classes.Position(1,1));
+        Console.WriteLine(gs);
+    }
+}

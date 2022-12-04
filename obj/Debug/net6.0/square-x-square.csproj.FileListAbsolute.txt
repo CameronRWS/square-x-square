@@ -818,3 +818,7 @@ C:\Users\Camer\source\repos\square-x-square\obj\Debug\net6.0\square-x-square.dll
 C:\Users\Camer\source\repos\square-x-square\obj\Debug\net6.0\refint\square-x-square.dll
 C:\Users\Camer\source\repos\square-x-square\obj\Debug\net6.0\square-x-square.pdb
 C:\Users\Camer\source\repos\square-x-square\obj\Debug\net6.0\ref\square-x-square.dll
+C:\Users\Camer\source\repos\square-x-square\bin\Debug\net6.0\wwwroot\_framework\MudBlazor.dll
+C:\Users\Camer\source\repos\square-x-square\bin\Debug\net6.0\wwwroot\_framework\MudBlazor.dll.gz
+C:\Users\Camer\source\repos\square-x-square\bin\Debug\net6.0\MudBlazor.dll
+C:\Users\Camer\source\repos\square-x-square\obj\Debug\net6.0\build-gz\R0O5casZ.gz
