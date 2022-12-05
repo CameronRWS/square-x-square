@@ -1,0 +1,65 @@
+﻿@using Classes;
+
+@namespace Components
+
+<MudPaper @onclick="@RemoveBlockAtPosition" Class="p-2 unselectable" Height="50px" Width="50px" Style="@("background-color: " + Color)">
+    <MudPaper Class="" Height="40px" Width="40px" Style="@("background-color: " + InnerColor)" >
+
+    </MudPaper >
+</MudPaper >
+
+
+@code {
+    @using MudBlazor;
+
+    [Parameter]
+    public int Row { get; set; }
+
+    [Parameter]
+    public int Column { get; set; }
+
+    [Parameter]
+    public bool IsPlacing { get; set; }
+
+    [Parameter]
+    public int IdOfPlacing { get; set; }
+
+    [CascadingParameter]
+    public Game gs { get; set; }
+
+    [Parameter]
+    public EventCallback OnStateHasChanged { get; set; }
+
+    public string Color
+    {
+        get
+        {
+            return gs.GetColorOfTileAt(new Classes.Position(Row, Column));
+        }
+    }
+    public string InnerColor { 
+        get {
+            if(IsPlacing)
+            {
+                return gs.GetColor(IdOfPlacing);
+            } 
+            else
+            {
+                return gs.GetColorOfTileAt(new Classes.Position(Row, Column));
+            }
+
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+      
+    }
+
+    public async Task RemoveBlockAtPosition()
+    {
+        gs.RemoveBlockAtPosition(new Classes.Position(Row, Column));
+        await OnStateHasChanged.InvokeAsync();
+    }
+
+}

@@ -1,6 +1,6 @@
 ﻿namespace Classes
 {
-    public class IBlock : Block
+    public class I4Block : Block
     {
         private readonly Position[][] tiles = new Position[][]
         {
@@ -16,7 +16,7 @@
             new Position[] { new(0, 2), new (1, 2), new(2, 2), new(3,2) }  //tall bar on right half
         };
 
-        public IBlock(int id)
+        public I4Block(int id)
         {
             Id = id;
         }
@@ -24,5 +24,6 @@
         protected override Position StartOffset => new Position(0, 0);
 
         protected override Position[][] Tiles => tiles;
+
     }
 }

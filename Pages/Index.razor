@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Components;
 
 <PageTitle>Index</PageTitle>
 
@@ -8,28 +9,93 @@ Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
-<MudButton OnClick="@RunGame" Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
+<MudSelect T="Classes.Block" Label="Block to Place" @bind-Value="@_blockToPlace">
+    @foreach(var block in gs.BlocksToPlace)
+    {
+        <MudSelectItem Value="@block"></MudSelectItem>
+    }
+</MudSelect>
+
+<MudNumericField @bind-Value="_blockToPlace.offset.Row" Label="Row" Variant="Variant.Outlined" Min="0" Max="@(gs._rows-1)"/>
+<MudNumericField @bind-Value="_blockToPlace.offset.Column" Label="Column" Variant="Variant.Outlined" Min="0" Max="@(gs._cols-1)" />
+
+<MudNumericField HideSpinButtons="true" @bind-Value="_blockToPlace.rotationState" Label="Rotation State" Variant="Variant.Outlined" />
+
+<MudDivider/>
+<MudButton OnClick="@_blockToPlace.RotateCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Clockwise</MudButton>
+<MudButton OnClick="@_blockToPlace.RotateCCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Counter-Clockwise</MudButton>
+
+<MudNumericField HideSpinButtons="true" @bind-Value="_blockToPlace.flipState" Label="Flip State" Variant="Variant.Outlined" />
+
+<MudButton OnClick="@_blockToPlace.Flip" Variant="Variant.Filled" Color="Color.Primary">Flip</MudButton>
+
+<MudButton OnClick="@PlaceBlock" Variant="Variant.Filled" Color="Color.Primary">Place Block</MudButton>
+
+<CascadingValue Value="@gs">
+    <CascadingValue Value="@_blockToPlace">
+    <MudContainer>
+        @for (var c = 0; c < gs._cols; c++)
+        {
+            <span style="display: inline-block">
+                @for (var r = 0; r < gs._rows; r++)
+                {
+                    <TileComp OnStateHasChanged="OnStateHasChanged" Row="@r" Column="@c" IsPlacing="@IsPlacing(new Classes.Position(r, c))" IdOfPlacing="@_blockToPlace.Id"></TileComp>
+                }
+            </span>
+        }
+    </MudContainer>
+    </CascadingValue>
+</CascadingValue>
+
+<MudText>@_messageToLog</MudText>
 
 @code {
     @using Classes;
 
-    private GameState gs;
+    public Game gs;
+
+    public Classes.Block _blockToPlace;
+    public int rowToPlace = 0;
+    public int columnToPlace = 0;
+
+    private string _messageToLog = string.Empty;
 
     protected override void OnInitialized()
     {
-        gs = new GameState();
+        gs = new Game();
+        _blockToPlace = gs.BlocksToPlace.ElementAt(0);
     }
 
-    public void RunGame()
+    public void PlaceBlock()
     {
         Console.WriteLine(gs);
-        Classes.Block i = new IBlock(3);
-        i.Flip();
-        i.RotateCW();
-        i.RotateCW();
-        gs.CheckLocationAndAddBlock(i);
+
+        if (gs.CheckLocationAndAddBlock(_blockToPlace))
+        {
+            _messageToLog = "Successfully placed.";
+            if (gs.BlocksToPlace.Count != 0) _blockToPlace = gs.BlocksToPlace.ElementAt(0);
+        } else
+        {
+            _messageToLog = "Could not place.";
+        }
         Console.WriteLine(gs);
-        gs.RemoveBlockAtPosition(new Classes.Position(1,1));
-        Console.WriteLine(gs);
+    }
+
+    public bool IsPlacing(Classes.Position p)
+    {
+        foreach (var pos in _blockToPlace.TilePositions())
+        {
+            if(pos.Equals(p))
+            {
+                Console.WriteLine("IsPlacing is true for: " + pos);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void OnStateHasChanged()
+    {
+        StateHasChanged();
     }
 }

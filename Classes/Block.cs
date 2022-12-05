@@ -9,10 +9,11 @@ namespace Classes
 
         public int Id { get; set; }
 
-        private int rotationState;
-        private int flipState;
+        //TODO: make properties
+        public int rotationState;
+        public int flipState;
 
-        private Position offset;
+        public Position offset;
 
         public Block()
         {
