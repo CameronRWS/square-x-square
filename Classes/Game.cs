@@ -1,8 +1,10 @@
 ﻿
 
+using Microsoft.AspNetCore.Components.Web;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Classes;
@@ -24,7 +26,7 @@ public class Game
     {
         Grid = new int[_rows, _cols];
         BlocksPlaced = new List<Block>();
-        BlocksToPlace = new List<Block>() { new I4Block(1), new I3Block(2) };
+        BlocksToPlace = new List<Block>() { new I4Block(1), new I3Block(2), new I2Block(3), new L3Block(4), new L4Block(5), new T4Block(6), new Z4Block(7) };
     }
 
     public string GetColorOfTileAt(Position p)
@@ -40,6 +42,20 @@ public class Game
                 return "white";
             case 1:
                 return "blue";
+            case 2:
+                return "green";
+            case 3:
+                return "red";
+            case 4:
+                return "purple";
+            case 5:
+                return "orange";
+            case 6:
+                return "teal";
+            case 7:
+                return "maroon";
+            case 8:
+                return "gray";
             default:
                 return "black";
         }
@@ -93,13 +109,25 @@ public class Game
         Console.WriteLine(this);
     }
 
+    public bool IsBlockInBounds(Block b)
+    {
+        foreach (var position in b.TilePositions())
+        {
+            if (!IsPositionInBounds(position))
+            {
+                Console.WriteLine("Selected block location for " + b + " was invalid due to being out of bounds.");
+                return false;
+            }
+        }
+        return true;
+    }
+
     public bool IsBlockLocationValid(Block b)
     {
         foreach(var position in b.TilePositions())
         {
             if(!IsPositionInBounds(position)) {
                 Console.WriteLine("Selected block location for " + b + " was invalid due to being out of bounds.");
-                Console.WriteLine(position + " has the value of: " + Grid[position.Row, position.Column]);
                 return false;
             }
             else if (Grid[position.Row, position.Column] != 0)

@@ -6,48 +6,51 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+<div @onkeydown="KeyboardEventHandler">
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <SurveyPrompt Title=" How is Blazor working for you?" />
 
-<MudSelect T="Classes.Block" Label="Block to Place" @bind-Value="@_blockToPlace">
-    @foreach(var block in gs.BlocksToPlace)
-    {
-        <MudSelectItem Value="@block"></MudSelectItem>
-    }
-</MudSelect>
-
-<MudNumericField @bind-Value="_blockToPlace.offset.Row" Label="Row" Variant="Variant.Outlined" Min="0" Max="@(gs._rows-1)"/>
-<MudNumericField @bind-Value="_blockToPlace.offset.Column" Label="Column" Variant="Variant.Outlined" Min="0" Max="@(gs._cols-1)" />
-
-<MudNumericField HideSpinButtons="true" @bind-Value="_blockToPlace.rotationState" Label="Rotation State" Variant="Variant.Outlined" />
-
-<MudDivider/>
-<MudButton OnClick="@_blockToPlace.RotateCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Clockwise</MudButton>
-<MudButton OnClick="@_blockToPlace.RotateCCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Counter-Clockwise</MudButton>
-
-<MudNumericField HideSpinButtons="true" @bind-Value="_blockToPlace.flipState" Label="Flip State" Variant="Variant.Outlined" />
-
-<MudButton OnClick="@_blockToPlace.Flip" Variant="Variant.Filled" Color="Color.Primary">Flip</MudButton>
-
-<MudButton OnClick="@PlaceBlock" Variant="Variant.Filled" Color="Color.Primary">Place Block</MudButton>
-
-<CascadingValue Value="@gs">
-    <CascadingValue Value="@_blockToPlace">
-    <MudContainer>
-        @for (var c = 0; c < gs._cols; c++)
+    <MudSelect T="Classes.Block" Label="Block to Place" @bind-Value="@_blockToPlace">
+        @foreach (var block in gs.BlocksToPlace)
         {
-            <span style="display: inline-block">
-                @for (var r = 0; r < gs._rows; r++)
-                {
-                    <TileComp OnStateHasChanged="OnStateHasChanged" Row="@r" Column="@c" IsPlacing="@IsPlacing(new Classes.Position(r, c))" IdOfPlacing="@_blockToPlace.Id"></TileComp>
-                }
-            </span>
+            <MudSelectItem Value="@block"></MudSelectItem>
         }
-    </MudContainer>
-    </CascadingValue>
-</CascadingValue>
+    </MudSelect>
 
-<MudText>@_messageToLog</MudText>
+    <MudNumericField @bind-Value="_blockToPlace.offset.Row" Label="Row" Variant="Variant.Outlined" Min="0" Max="@(gs._rows-1)" />
+    <MudNumericField @bind-Value="_blockToPlace.offset.Column" Label="Column" Variant="Variant.Outlined" Min="0" Max="@(gs._cols-1)" />
+
+    <MudNumericField HideSpinButtons="true" @bind-Value="_blockToPlace.rotationState" Label="Rotation State" Variant="Variant.Outlined" />
+
+    <MudDivider />
+    <MudButton OnClick="@_blockToPlace.RotateCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Clockwise</MudButton>
+    <MudButton OnClick="@_blockToPlace.RotateCCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Counter-Clockwise</MudButton>
+
+    <MudNumericField HideSpinButtons="true" @bind-Value="_blockToPlace.flipState" Label="Flip State" Variant="Variant.Outlined" />
+
+    <MudButton OnClick="@_blockToPlace.Flip" Variant="Variant.Filled" Color="Color.Primary">Flip</MudButton>
+
+    <MudButton OnClick="@PlaceBlock" Variant="Variant.Filled" Color="Color.Primary">Place Block</MudButton>
+
+    <CascadingValue Value="@gs">
+        <CascadingValue Value="@_blockToPlace">
+            <MudContainer>
+                @for (var c = 0; c < gs._cols; c++)
+                {
+                    <span style="display: inline-block">
+                        @for (var r = 0; r < gs._rows; r++)
+                        {
+                            <TileComp OnStateHasChanged="OnStateHasChanged" Row="@r" Column="@c" IsPlacing="@IsPlacing(new Classes.Position(r, c))" IdOfPlacing="@_blockToPlace.Id"></TileComp>
+                        }
+                    </span>
+                }
+            </MudContainer>
+        </CascadingValue>
+    </CascadingValue>
+
+    <MudText>@_messageToLog</MudText>
+</div>
+
 
 @code {
     @using Classes;
@@ -64,6 +67,54 @@ Welcome to your new app.
     {
         gs = new Game();
         _blockToPlace = gs.BlocksToPlace.ElementAt(0);
+    }
+
+    private void KeyboardEventHandler(KeyboardEventArgs args)
+    {
+        Console.WriteLine("Key: " + args.Key + ", Type: " + args.Type);
+
+        if(args.Type == "keydown")
+        {
+            if(args.Key == "ArrowUp")
+            {
+                _blockToPlace.offset.Row--;
+                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Row++;
+            }
+            else if (args.Key == "ArrowDown")
+            {
+                _blockToPlace.offset.Row++;
+                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Row--;
+            }
+            else if (args.Key == "ArrowRight")
+            {
+                _blockToPlace.offset.Column++;
+                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Column--;
+            }
+            else if (args.Key == "ArrowLeft")
+            {
+                _blockToPlace.offset.Column--;
+                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Column++;
+            }
+            else if (args.Key == "a")
+            {
+                _blockToPlace.RotateCCW();
+                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.RotateCW();
+            }
+            else if (args.Key == "d")
+            {
+                _blockToPlace.RotateCW();
+                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.RotateCCW();
+            }
+            else if (args.Key == "s")
+            {
+                _blockToPlace.Flip();
+                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.Flip();
+            }
+            else if (args.Key == " ")
+            {
+                PlaceBlock();
+            }
+        }
     }
 
     public void PlaceBlock()
