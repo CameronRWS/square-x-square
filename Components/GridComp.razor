@@ -1,0 +1,46 @@
+﻿@using Classes;
+
+@namespace Components
+
+<MudContainer>
+    @for (var c = 0; c < gs._cols; c++)
+    {
+        <span style="display: inline-block">
+        @for (var r = 0; r < gs._rows; r++)
+        {
+            <TileComp OnStateHasChanged="OnStateHasChanged" Row="@r" Column="@c" IsPlacing="@IsPlacing(new Classes.Position(r, c))" IdOfPlacing="@GetBlockId()"></TileComp>
+        }
+        </span>
+    }
+</MudContainer>
+
+@code {
+    [CascadingParameter]
+    public Game gs { get; set; }
+
+    [CascadingParameter]
+    public Classes.Block _blockToPlace { get; set; }
+
+    [Parameter]
+    public EventCallback OnStateHasChanged { get; set; }
+
+    public bool IsPlacing(Classes.Position p)
+    {
+        if (_blockToPlace == null) return false;
+        foreach (var pos in _blockToPlace.TilePositions())
+        {
+            if (pos.Equals(p))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int GetBlockId()
+    {
+        if (_blockToPlace == null) return -1;
+        return _blockToPlace.Id;
+    }
+
+}

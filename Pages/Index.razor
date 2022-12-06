@@ -1,50 +1,30 @@
 ﻿@page "/"
 @using Components;
 
-<PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+Square x Square
+
 <div @onkeydown="KeyboardEventHandler">
 
-    <SurveyPrompt Title=" How is Blazor working for you?" />
-
-    <MudSelect T="Classes.Block" Label="Block to Place" @bind-Value="@_blockToPlace">
-        @foreach (var block in gs.BlocksToPlace)
-        {
-            <MudSelectItem Value="@block"></MudSelectItem>
-        }
-    </MudSelect>
-
-    <MudNumericField @bind-Value="_blockToPlace.offset.Row" Label="Row" Variant="Variant.Outlined" Min="0" Max="@(gs._rows-1)" />
-    <MudNumericField @bind-Value="_blockToPlace.offset.Column" Label="Column" Variant="Variant.Outlined" Min="0" Max="@(gs._cols-1)" />
-
-    <MudNumericField HideSpinButtons="true" @bind-Value="_blockToPlace.rotationState" Label="Rotation State" Variant="Variant.Outlined" />
-
+    <MudIconButton Icon=@Icons.Filled.ArrowBack OnClick ="@MoveLeft" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+    <MudIconButton Icon=@Icons.Filled.ArrowDownward OnClick="@MoveDown" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+    <MudIconButton Icon=@Icons.Filled.ArrowUpward OnClick ="@MoveUp" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+    <MudIconButton Icon=@Icons.Filled.ArrowForward OnClick="@MoveRight" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
     <MudDivider />
-    <MudButton OnClick="@_blockToPlace.RotateCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Clockwise</MudButton>
-    <MudButton OnClick="@_blockToPlace.RotateCCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Counter-Clockwise</MudButton>
-
-    <MudNumericField HideSpinButtons="true" @bind-Value="_blockToPlace.flipState" Label="Flip State" Variant="Variant.Outlined" />
-
-    <MudButton OnClick="@_blockToPlace.Flip" Variant="Variant.Filled" Color="Color.Primary">Flip</MudButton>
-
+    <MudButton OnClick="@NextBlock" Variant="Variant.Filled" Color="Color.Primary">Next Block</MudButton>
+    <MudButton OnClick="@PrevBlock" Variant="Variant.Filled" Color="Color.Primary">Prev Block</MudButton>
+    <MudDivider />
+    <MudButton OnClick="@RotateCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Clockwise</MudButton>
+    <MudButton OnClick="@RotateCCW" Variant="Variant.Filled" Color="Color.Primary">Rotate Counter-Clockwise</MudButton>
+    <MudButton OnClick="@Flip" Variant="Variant.Filled" Color="Color.Primary">Flip</MudButton>
+    <MudDivider />
     <MudButton OnClick="@PlaceBlock" Variant="Variant.Filled" Color="Color.Primary">Place Block</MudButton>
+    <MudButton OnClick="@Reset" Variant="Variant.Filled" Color="Color.Primary">Reset</MudButton>
 
     <CascadingValue Value="@gs">
         <CascadingValue Value="@_blockToPlace">
-            <MudContainer>
-                @for (var c = 0; c < gs._cols; c++)
-                {
-                    <span style="display: inline-block">
-                        @for (var r = 0; r < gs._rows; r++)
-                        {
-                            <TileComp OnStateHasChanged="OnStateHasChanged" Row="@r" Column="@c" IsPlacing="@IsPlacing(new Classes.Position(r, c))" IdOfPlacing="@_blockToPlace.Id"></TileComp>
-                        }
-                    </span>
-                }
-            </MudContainer>
+            <GridComp OnStateHasChanged="OnStateHasChanged" />
         </CascadingValue>
     </CascadingValue>
 
@@ -57,7 +37,7 @@ Welcome to your new app.
 
     public Game gs;
 
-    public Classes.Block _blockToPlace;
+    public Classes.Block _blockToPlace { get; set; }
     public int rowToPlace = 0;
     public int columnToPlace = 0;
 
@@ -65,84 +45,142 @@ Welcome to your new app.
 
     protected override void OnInitialized()
     {
-        gs = new Game();
-        _blockToPlace = gs.BlocksToPlace.ElementAt(0);
+        Reset();
     }
 
-    private void KeyboardEventHandler(KeyboardEventArgs args)
+    public void Reset()
     {
-        Console.WriteLine("Key: " + args.Key + ", Type: " + args.Type);
+        gs = new Game();
+        _blockToPlace = gs.BlocksToPlace.ElementAt(0);
+        _messageToLog = "Fill in the square.";
+    }
 
-        if(args.Type == "keydown")
-        {
-            if(args.Key == "ArrowUp")
-            {
-                _blockToPlace.offset.Row--;
-                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Row++;
-            }
-            else if (args.Key == "ArrowDown")
-            {
-                _blockToPlace.offset.Row++;
-                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Row--;
-            }
-            else if (args.Key == "ArrowRight")
-            {
-                _blockToPlace.offset.Column++;
-                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Column--;
-            }
-            else if (args.Key == "ArrowLeft")
-            {
-                _blockToPlace.offset.Column--;
-                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Column++;
-            }
-            else if (args.Key == "a")
-            {
-                _blockToPlace.RotateCCW();
-                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.RotateCW();
-            }
-            else if (args.Key == "d")
-            {
-                _blockToPlace.RotateCW();
-                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.RotateCCW();
-            }
-            else if (args.Key == "s")
-            {
-                _blockToPlace.Flip();
-                if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.Flip();
-            }
-            else if (args.Key == " ")
-            {
-                PlaceBlock();
-            }
-        }
+    public void Flip()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace.Flip();
+    }
+
+    public void RotateCCW()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace.RotateCCW();
+    }
+
+    public void RotateCW()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace.RotateCW();
+    }
+
+    public void MoveLeft()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace.offset.Column--;
+        if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Column++;
+    }
+
+    public void MoveRight()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace.offset.Column++;
+        if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Column--;
+    }
+
+    public void MoveUp()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace.offset.Row--;
+        if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Row++;
+    }
+
+    public void MoveDown()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace.offset.Row++;
+        if (!gs.IsBlockInBounds(_blockToPlace)) _blockToPlace.offset.Row--;
+    }
+
+    public void NextBlock()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace = gs.GetNextBlockToPlace(_blockToPlace);
+    }
+
+    public void PrevBlock()
+    {
+        if (_blockToPlace == null) return;
+        _blockToPlace = gs.GetPrevBlockToPlace(_blockToPlace);
     }
 
     public void PlaceBlock()
     {
-        Console.WriteLine(gs);
-
+        if (_blockToPlace == null) return;
         if (gs.CheckLocationAndAddBlock(_blockToPlace))
         {
             _messageToLog = "Successfully placed.";
-            if (gs.BlocksToPlace.Count != 0) _blockToPlace = gs.BlocksToPlace.ElementAt(0);
-        } else
-        {
-            _messageToLog = "Could not place.";
-        }
-        Console.WriteLine(gs);
-    }
-
-    public bool IsPlacing(Classes.Position p)
-    {
-        foreach (var pos in _blockToPlace.TilePositions())
-        {
-            if(pos.Equals(p))
+            if (gs.BlocksToPlace.Count != 0)
             {
-                Console.WriteLine("IsPlacing is true for: " + pos);
-                return true;
+                _blockToPlace = gs.BlocksToPlace.ElementAt(0);
+            }
+            else
+            {
+                _blockToPlace = null;
+                _messageToLog = "Placed the last block. Nice.";
             }
         }
-        return false;
+        else
+        {
+            _messageToLog = "Could not place here.";
+        }
+    }
+
+    private void KeyboardEventHandler(KeyboardEventArgs args)
+    {
+        if (_blockToPlace == null) return;
+        if(args.Type == "keydown")
+        {
+            if(args.Key == "ArrowUp")
+            {
+                MoveUp();
+            }
+            else if (args.Key == "ArrowDown")
+            {
+                MoveDown();
+            }
+            else if (args.Key == "ArrowRight")
+            {
+                MoveRight();
+            }
+            else if (args.Key == "ArrowLeft")
+            {
+                MoveLeft();
+            }
+            else if (args.Key == "a")
+            {
+                RotateCCW();
+            }
+            else if (args.Key == "d")
+            {
+                RotateCW();
+            }
+            else if (args.Key == "f")
+            {
+                Flip();
+            }
+            else if (args.Key == "w")
+            {
+                NextBlock();
+            }
+            else if (args.Key == "s")
+            {
+                PrevBlock();
+            }
+            else if (args.Key == "e")
+            {
+                PlaceBlock();
+            }
+        }
     }
 
     private void OnStateHasChanged()

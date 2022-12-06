@@ -26,7 +26,9 @@ public class Game
     {
         Grid = new int[_rows, _cols];
         BlocksPlaced = new List<Block>();
-        BlocksToPlace = new List<Block>() { new I4Block(1), new I3Block(2), new I2Block(3), new L3Block(4), new L4Block(5), new T4Block(6), new Z4Block(7) };
+        BlocksToPlace = new List<Block>() { new I4Block(1), new I3Block(2), new I2Block(3), new L3Block(4),
+            new L4Block(5), new T4Block(6), new Z4Block(7), new O4Block(8) };
+        InitializeGame(); //creates blocks that cant move.
     }
 
     public string GetColorOfTileAt(Position p)
@@ -82,7 +84,7 @@ public class Game
         BlocksToPlace.Remove(b);
     }
 
-    public void RemoveBlockAtPosition(Position p)
+    public Block RemoveBlockAtPosition(Position p)
     {
         foreach(var b in BlocksPlaced)
         {
@@ -90,15 +92,16 @@ public class Game
             {
                 if(p.Row == pos.Row && p.Column == pos.Column)
                 {
-                    RemoveBlock(b);
-                    return;
+                    return RemoveBlock(b);
                 }
             }
         }
+        return null;
     }
 
-    private void RemoveBlock(Block b)
+    private Block RemoveBlock(Block b)
     {
+        if (b.Id == -1) return null;
         Console.WriteLine("Removing block with Id: " + b.Id);
         foreach(var pos in b.TilePositions())
         {
@@ -106,7 +109,7 @@ public class Game
         }
         BlocksToPlace.Add(b);
         BlocksPlaced.Remove(b);
-        Console.WriteLine(this);
+        return b;
     }
 
     public bool IsBlockInBounds(Block b)
@@ -122,22 +125,25 @@ public class Game
         return true;
     }
 
-    public bool IsBlockLocationValid(Block b)
+    public bool IsBlockClearToPlace(Block b)
     {
-        foreach(var position in b.TilePositions())
+        foreach (var position in b.TilePositions())
         {
-            if(!IsPositionInBounds(position)) {
-                Console.WriteLine("Selected block location for " + b + " was invalid due to being out of bounds.");
-                return false;
-            }
-            else if (Grid[position.Row, position.Column] != 0)
+            if (Grid[position.Row, position.Column] != 0)
             {
                 Console.WriteLine("Selected block location for " + b + " was invalid due to block collision");
                 Console.WriteLine(position + " has the value of: " + Grid[position.Row, position.Column]);
                 return false;
             }
         }
-        Console.WriteLine("Selected block location for " + b + " was valid");
+        return true;
+    }
+
+    public bool IsBlockLocationValid(Block b)
+    {
+        if(!IsBlockInBounds(b)) return false;
+        if(!IsBlockClearToPlace(b)) return false;
+        Console.WriteLine("Selected block location for " + b + " was valid.");
         return true;
     }
 
@@ -165,5 +171,54 @@ public class Game
             s += "]," + "\n";
         }
         return s;
+    }
+
+    public Block GetNextBlockToPlace(Block b)
+    {
+        int elementIndex = BlocksToPlace.IndexOf(b);
+        if (elementIndex == BlocksToPlace.Count - 1) return BlocksToPlace[0];
+        return BlocksToPlace[elementIndex + 1];
+    }
+
+    public Block GetPrevBlockToPlace(Block b)
+    {
+        int elementIndex = BlocksToPlace.IndexOf(b);
+        if (elementIndex == 0) return BlocksToPlace[BlocksToPlace.Count - 1];
+        return BlocksToPlace[elementIndex - 1];
+    }
+
+
+
+
+
+
+
+
+
+
+    //delete this ugly
+    public void InitializeGame()
+    {
+        var l = new List<Block>();
+        var b1 = new O1Block(-1);
+        b1.Move(4, 2);
+        var b2 = new O1Block(-1);
+        b2.Move(4, 3);
+        var b3 = new O1Block(-1);
+        b3.Move(3, 2);
+        var b4 = new O1Block(-1);
+        b4.Move(3, 3);
+        var b5 = new I2Block(-1);
+        b5.Move(2, 0);
+        b5.RotateCW();
+        var b6 = new I2Block(-1);
+        b6.Move(2, 3);
+        b6.RotateCW();
+        this.CheckLocationAndAddBlock(b1);
+        this.CheckLocationAndAddBlock(b2);
+        this.CheckLocationAndAddBlock(b3);
+        this.CheckLocationAndAddBlock(b4);
+        this.CheckLocationAndAddBlock(b5);
+        this.CheckLocationAndAddBlock(b6);
     }
 }

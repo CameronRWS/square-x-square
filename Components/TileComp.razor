@@ -27,6 +27,9 @@
     [CascadingParameter]
     public Game gs { get; set; }
 
+    [CascadingParameter]
+    public Classes.Block _blockToPlace { get; set; }
+
     [Parameter]
     public EventCallback OnStateHasChanged { get; set; }
 
@@ -51,14 +54,15 @@
         }
     }
 
-    protected override void OnInitialized()
-    {
-      
-    }
-
     public async Task RemoveBlockAtPosition()
     {
-        gs.RemoveBlockAtPosition(new Classes.Position(Row, Column));
+        //TODO this doesnt work.
+        var b = gs.RemoveBlockAtPosition(new Classes.Position(Row, Column));
+        if (b != null) 
+        {
+            Console.WriteLine(b);
+            _blockToPlace = b;
+        }
         await OnStateHasChanged.InvokeAsync();
     }
 
