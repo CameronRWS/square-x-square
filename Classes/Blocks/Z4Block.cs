@@ -1,4 +1,4 @@
-﻿namespace Classes
+﻿namespace Classes.Blocks
 {
     public class Z4Block : Block
     {
@@ -22,9 +22,10 @@
             Id = id;
         }
 
+        protected override int BoundingBoxSize => 3;
+
         protected override Position StartOffset => new Position(0, 0);
 
         protected override Position[][] Tiles => tiles;
-
     }
 }

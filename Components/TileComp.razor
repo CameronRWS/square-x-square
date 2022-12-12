@@ -28,7 +28,7 @@
     public Game gs { get; set; }
 
     [CascadingParameter]
-    public Classes.Block _blockToPlace { get; set; }
+    public Classes.Blocks.Block _blockToPlace { get; set; }
 
     [Parameter]
     public EventCallback OnStateHasChanged { get; set; }
@@ -40,8 +40,10 @@
             return gs.GetColorOfTileAt(new Classes.Position(Row, Column));
         }
     }
+
     public string InnerColor { 
-        get {
+        get 
+        {
             if(IsPlacing)
             {
                 return gs.GetColor(IdOfPlacing);
@@ -50,7 +52,6 @@
             {
                 return gs.GetColorOfTileAt(new Classes.Position(Row, Column));
             }
-
         }
     }
 

@@ -1,4 +1,6 @@
-﻿namespace Classes
+﻿using Classes.Blocks;
+
+namespace Classes
 {
     public class Position
     {
@@ -22,6 +24,11 @@
             if (obj.GetType() != typeof(Position)) return false;
 
             return this.Column == ((Position)obj).Column && this.Row == ((Position)obj).Row;
+        }
+
+        public Position Clone()
+        {
+            return new Position(this.Row, this.Column);
         }
     }
 }

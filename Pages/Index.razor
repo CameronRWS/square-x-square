@@ -1,10 +1,6 @@
 ﻿@page "/"
 @using Components;
 
-
-
-Square x Square
-
 <div @onkeydown="KeyboardEventHandler">
 
     <MudIconButton Icon=@Icons.Filled.ArrowBack OnClick ="@MoveLeft" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
@@ -29,6 +25,8 @@ Square x Square
     </CascadingValue>
 
     <MudText>@_messageToLog</MudText>
+
+    <MudButton OnClick="@PrintWhatever" Variant="Variant.Filled" Color="Color.Primary">Print Whatever</MudButton>
 </div>
 
 
@@ -37,7 +35,7 @@ Square x Square
 
     public Game gs;
 
-    public Classes.Block _blockToPlace { get; set; }
+    public Classes.Blocks.Block _blockToPlace { get; set; }
     public int rowToPlace = 0;
     public int columnToPlace = 0;
 
@@ -46,6 +44,12 @@ Square x Square
     protected override void OnInitialized()
     {
         Reset();
+    }
+
+    public void PrintWhatever()
+    {
+        gs.PrintSolved();
+        _blockToPlace = null;
     }
 
     public void Reset()
